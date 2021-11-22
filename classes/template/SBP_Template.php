@@ -6,7 +6,13 @@
 class SBP_Template
 {
 
-    use SBP_Register_Templates, SBP_Template_JS, SBP_Template_CSS, SBP_Frontend_Shortcode;
+    use SBP_Register_Templates,
+        SBP_Template_JS,
+        SBP_Template_CSS,
+        SBP_Frontend_SC,
+        SBP_Colors_SC,
+        SBP_Features_SC,
+        SBP_Price_Slider_SC;
 
     /**
      * Class init function. Registers all scripts, WP AJAX functions 
@@ -30,7 +36,7 @@ class SBP_Template
         add_shortcode('sbp_colors', [__CLASS__, 'colors']);
 
         // shortcode to display features list in sidebar
-        add_shortcode('sbp_feature', [__CLASS__, 'features']);
+        add_shortcode('sbp_features', [__CLASS__, 'features']);
 
         // shortcode to display price slider in sidebar
         add_shortcode('sbp_price_slider', [__CLASS__, 'price_slider']);
@@ -51,6 +57,7 @@ class SBP_Template
     {
         wp_register_script('sbp-frontend-js', self::sbp_frontend_js(), ['jquery'], false, false);
         wp_register_style('sbp-frontend-css', self::sbp_frontend_css(), [], false);
+        wp_register_style('sbp-jquery-ui', SBP_URL . 'assets/jquery.ui.css', [], false);
     }
 
     /**
@@ -67,7 +74,7 @@ class SBP_Template
         wp_die();
     }
 
-   
+
 
     /**
      * Query products based on language currently being viewed on the frontend and return array of product ids

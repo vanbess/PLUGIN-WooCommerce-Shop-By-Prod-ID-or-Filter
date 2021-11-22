@@ -1,40 +1,107 @@
 <?php
 
+/**
+ * 1. Generate filtered list of colors for current product category
+ * 2. Build clickable swatch filter list (multiple selection)
+ * 3. Filter products based on selection
+ */
+
 trait SBP_Colors_SC
 {
 
+    /**
+     * flag to check whether colored variable data have been saved or not
+     */
+    static $colors_saved = false;
+
+    /**
+     * Display filter colors
+     *
+     * @return html
+     */
     public static function colors()
-    { ?>
-        <div class="wcva_filter_widget"> 
-            <a title="Beige" href="https://dev.nordace.com/en/shop/?filter_color=beige" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#f4f4c6; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Black" href="https://dev.nordace.com/en/shop/?filter_color=black" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#000000; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Blue" href="https://dev.nordace.com/en/shop/?filter_color=blue" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#1e73be; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Brown" href="https://dev.nordace.com/en/shop/?filter_color=brown" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#dd8500; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Dark Green" href="https://dev.nordace.com/en/shop/?filter_color=dark-green" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#1c6312; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Gray" href="https://dev.nordace.com/en/shop/?filter_color=gray" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#a0a0a0; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Navy Blue" href="https://dev.nordace.com/en/shop/?filter_color=navy-blue" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#093a84; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Pink" href="https://dev.nordace.com/en/shop/?filter_color=pink" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#ffbfbf; width:20px; float:left; height:20px;"></div>
-            </a>
-            <a title="Red" href="https://dev.nordace.com/en/shop/?filter_color=red" class="wcvaswatchinput" rel="nofollow" style="width:20px; height:20px;">
-                <div class="wcvashopswatchlabel wcvasquare " style="background-color:#dd3333; width:20px; float:left; height:20px;"></div>
-            </a>
-        </div>
-<?php }
-}
+    {
+        global $post;
+
+        // retrieve category name, which should be equal to post title
+        $category = $post->post_title;
+
+        // query prodocts
+        $prod_ids = self::query_products($category);
+
+        // build color data
+        $color_data = [];
+
+        // loop
+        foreach ($prod_ids as $key => $id) :
+
+            // retrieve colored variables meta data
+            $attribs = get_post_meta($id, '_coloredvariables', true);
+
+            // if colored variable data available, retrieve colors
+            if (!empty($attribs['pa_color'])) :
+
+                $colors = $attribs['pa_color']['values'];
+
+                // loop through colors and push colowr name => color code to $color_data array
+                foreach ($colors as $color => $c_data) :
+                    $color_data[$color] = $c_data['color'];
+                endforeach;
+
+            endif;
+
+        endforeach;
+
+        // save color data to db for later ref
+        if (self::$colors_saved === false) :
+
+            $col_saved = update_option('sbp_color_data', $color_data);
+
+            if ($col_saved !== false) :
+                self::$colors_saved = true;
+            endif;
+
+        endif;
+
+        // retrieve swatch width and height to display correct swatch size
+        $s_width = get_option('woocommerce_shop_swatch_width', '32');
+        $s_height = get_option('woocommerce_shop_swatch_height', '32');
 
 ?>
+
+        <span id="sbp-widget-filter-head"><?php _e('Filter ' . $category, 'woocommerce'); ?></span>
+
+        <span class="widget-title">
+            <span><?php _e('Colors', 'woocommerce'); ?></span>
+        </span>
+
+        <div class="is-divider small"></div>
+
+        <?php foreach ($color_data as $name => $color_code) : ?>
+            <a class="sbp-color-swatch" style="display: inline-block; width: <?php print $s_width; ?>px; height: <?php print $s_height; ?>px; background: <?php print $color_code; ?>" href="#" data-color="<?php echo $name; ?>" title="<?php _e('Click to select ' . $name, 'woocommerce'); ?>">
+            </a>
+        <?php endforeach; ?>
+
+<?php }
+
+
+    /**
+     * Query products based on language currently being viewed on the frontend and return array of product ids
+     *
+     * @return array $prod_ids - Array of matching product IDs to be used to render frontend display of products
+     */
+    private static function query_products($category)
+    {
+
+        $args = [
+            'limit'    => -1,
+            'category' => [$category],
+            'return'   => 'ids',
+            'status'   => 'publish'
+        ];
+
+        $prod_ids = wc_get_products($args);
+
+        return $prod_ids;
+    }
+}

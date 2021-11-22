@@ -45,6 +45,39 @@ trait SBP_Template_CSS
             }
 
             <?php endif; ?>
+
+            /* widget/sidebar styles */
+            span#sbp-widget-filter-head {
+                display: block;
+                font-weight: 600;
+                letter-spacing: 1px;
+                font-size: 18px;
+                text-transform: uppercase;
+                text-align: center;
+                background: #efefef;
+                line-height: 2.5;
+                margin-bottom: 20px;
+            }
+
+            button.button.button-default.sbp-feature {
+                background: #efefef;
+                color: black;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            p#sbp-price-slider-text {
+                font-size: 14px;
+            }
+
+            div#sbp-slider-range {
+                height: 8px;
+            }
+
+            #sbp-slider-range>span {
+                border-radius: 50%;
+                top: -6px;
+            }
         </style>
 <?php }
 }

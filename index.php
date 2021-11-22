@@ -36,6 +36,5 @@ function sbwc_shop_by_init()
 
     // cpt
     include SBP_PATH . 'functions/cpt.php';
-
     
 }

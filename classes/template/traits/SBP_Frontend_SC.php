@@ -1,6 +1,6 @@
 <?php
 
-trait SBP_Frontend_Shortcode
+trait SBP_Frontend_SC
 {
     /**
      * Actual shortode to render template on frontend
@@ -23,6 +23,9 @@ trait SBP_Frontend_Shortcode
 
                 // retrieve prod object and associated data
                 $prod_obj = wc_get_product($pid);
+
+                // retrieve discount percentage
+                $disc_perc = get_post_meta($pid, '_flatsome_product_percentage', true);
 
                 // retrieve product type
                 $prod_type = $prod_obj->get_type();
@@ -55,12 +58,12 @@ trait SBP_Frontend_Shortcode
 ?>
                 <div class="product-small col has-hover post-<?php echo $pid; ?> product has-post-thumbnail">
                     <div class="col-inner">
-                        <?php if ($sale_price && $sale_price < $reg_price) :
+                        <?php if ($disc_perc || $sale_price) :
                             $d_perc = (($reg_price - $sale_price) / $reg_price) * 100;
                         ?>
                             <div class="badge-container absolute left top z-1">
                                 <div class="callout badge badge-circle">
-                                    <div class="badge-inner secondary on-sale"><span class="onsale">-<?php echo number_format($d_perc, 0); ?>%</span></div>
+                                    <div class="badge-inner secondary on-sale"><span class="onsale">-<?php $disc_perc ? print $disc_perc : print number_format($d_perc, 0); ?>%</span></div>
                                 </div>
                             </div>
                         <?php endif; ?>
