@@ -6,13 +6,14 @@
 class SBP_Template
 {
 
+    /**
+     * Traits
+     */
     use SBP_Register_Templates,
         SBP_Template_JS,
         SBP_Template_CSS,
         SBP_Frontend_SC,
-        SBP_Colors_SC,
-        SBP_Features_SC,
-        SBP_Price_Slider_SC;
+        SBP_Insert_Default_Pages;
 
     /**
      * Class init function. Registers all scripts, WP AJAX functions 
@@ -22,24 +23,15 @@ class SBP_Template
      */
     public static function init()
     {
+
+        // insert default shop by pages
+        add_action('admin_head', [__CLASS__, 'insert_default_pages']);
+
         // scripts
         add_action('wp_footer', [__CLASS__, 'sbp_frontend_reg_scripts']);
 
-        // frontend ajax filter action
-        add_action('wp_ajax_sbp_frontend_ajax', [__CLASS__, 'sbp_frontend_ajax']);
-        add_action('wp_ajax_nopriv_sbp_frontend_ajax', [__CLASS__, 'sbp_frontend_ajax']);
-
         // shortcode to display different shop by pages
         add_shortcode('sbp_shopby_display', [__CLASS__, 'sbp_frontend_display']);
-
-        // shortcode to display color slider in sidebar
-        add_shortcode('sbp_colors', [__CLASS__, 'colors']);
-
-        // shortcode to display features list in sidebar
-        add_shortcode('sbp_features', [__CLASS__, 'features']);
-
-        // shortcode to display price slider in sidebar
-        add_shortcode('sbp_price_slider', [__CLASS__, 'price_slider']);
 
         // register custom Flatsome page templates for selection in shop by page edit screen 
         add_filter('theme_shop-by_templates', [__CLASS__, 'sbp_register_page_templates'], 10, 4);
@@ -59,22 +51,6 @@ class SBP_Template
         wp_register_style('sbp-frontend-css', self::sbp_frontend_css(), [], false);
         wp_register_style('sbp-jquery-ui', SBP_URL . 'assets/jquery.ui.css', [], false);
     }
-
-    /**
-     * AJAX function which queries and returns filtered Shop By results in html format
-     *
-     * @return void
-     */
-    public static function sbp_frontend_ajax()
-    {
-        check_ajax_referer('sbp frontend filter query');
-
-        print_r($_POST);
-
-        wp_die();
-    }
-
-
 
     /**
      * Query products based on language currently being viewed on the frontend and return array of product ids

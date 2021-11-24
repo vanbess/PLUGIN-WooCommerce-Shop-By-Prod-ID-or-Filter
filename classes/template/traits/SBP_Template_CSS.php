@@ -78,6 +78,33 @@ trait SBP_Template_CSS
                 border-radius: 50%;
                 top: -6px;
             }
+
+            div#sbp-colors-cont {
+                margin-bottom: 20px;
+            }
+
+            div#sbp-features-cont {
+                margin-bottom: 20px;
+            }
+
+            div#sbp-price-range-cont {
+                margin-bottom: 50px;
+            }
+
+            div#sbp-filter-button-cont>button {
+                width: 100%;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                box-sizing: border-box;
+            }
+
+            .sbp-color-selected{
+                border: 2px solid white !important;
+            }
+
+            .sbp-feature-selected{
+                border: 1px solid #0587f9 !important;
+            }
         </style>
 <?php }
 }

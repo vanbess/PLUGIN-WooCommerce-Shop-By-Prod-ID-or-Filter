@@ -17,8 +17,6 @@ trait SBP_Register_Templates
      */
     public static function sbp_register_page_templates($post_templates, $wp_theme, $post, $post_type)
     {
-        $post_templates['sbptmpl-blank-title-center.php'] = __('SBP Container Center Title', 'woocommerce');
-        $post_templates['sbptmpl-full-width.php'] = __('SBP Full Width', 'woocommerce');
         $post_templates['sbptmpl-left-sidebar.php'] = __('SBP Left Sidebar', 'woocommerce');
         $post_templates['sbptmpl-right-sidebar.php'] = __('SBP Right Sidebar', 'woocommerce');
 
@@ -33,26 +31,15 @@ trait SBP_Register_Templates
      */
     public static function sbp_load_page_templates($template)
     {
-
-        // blank title center
-        if (get_page_template_slug() === 'sbptmpl-blank-title-center.php') {
-            $template = SBP_PATH . 'classes/template/templates/sbp-blank-title-center.php';
-            return $template;
-        }
-        // full width
-        elseif (get_page_template_slug() === 'sbptmpl-full-width.php') {
-            $template = SBP_PATH . 'classes/template/templates/sbp-full-width.php';
-            return $template;
-        }
         // left sidebar
-        elseif (get_page_template_slug() === 'sbptmpl-left-sidebar.php') {
+        if (get_page_template_slug() === 'sbptmpl-left-sidebar.php') :
             $template = SBP_PATH . 'classes/template/templates/sbp-left-sidebar.php';
             return $template;
-        }
+
         // right sidebar
-        elseif (get_page_template_slug() === 'sbptmpl-right-sidebar.php') {
+        elseif (get_page_template_slug() === 'sbptmpl-right-sidebar.php') :
             $template = SBP_PATH . 'classes/template/templates/sbp-right-sidebar.php';
             return $template;
-        }
+        endif;
     }
 }

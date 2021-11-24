@@ -6,8 +6,10 @@
  * 3. Filter products based on selection
  */
 
-trait SBP_Colors_SC
+trait SBP_Colors
 {
+
+    use SB_Query_Prods;
 
     /**
      * flag to check whether colored variable data have been saved or not
@@ -27,7 +29,7 @@ trait SBP_Colors_SC
         $category = $post->post_title;
 
         // query prodocts
-        $prod_ids = self::query_products($category);
+        $prod_ids = self::sbp_query_products($category);
 
         // build color data
         $color_data = [];
@@ -68,40 +70,23 @@ trait SBP_Colors_SC
         $s_height = get_option('woocommerce_shop_swatch_height', '32');
 
 ?>
+        <!-- colors container -->
+        <div id="sbp-colors-cont">
 
-        <span id="sbp-widget-filter-head"><?php _e('Filter ' . $category, 'woocommerce'); ?></span>
+            <span id="sbp-widget-filter-head"><?php _e('Filter ' . $category, 'woocommerce'); ?></span>
 
-        <span class="widget-title">
-            <span><?php _e('Colors', 'woocommerce'); ?></span>
-        </span>
+            <span class="widget-title">
+                <span><?php _e('Colors', 'woocommerce'); ?></span>
+            </span>
 
-        <div class="is-divider small"></div>
+            <div class="is-divider small"></div>
 
-        <?php foreach ($color_data as $name => $color_code) : ?>
-            <a class="sbp-color-swatch" style="display: inline-block; width: <?php print $s_width; ?>px; height: <?php print $s_height; ?>px; background: <?php print $color_code; ?>" href="#" data-color="<?php echo $name; ?>" title="<?php _e('Click to select ' . $name, 'woocommerce'); ?>">
-            </a>
-        <?php endforeach; ?>
+            <?php foreach ($color_data as $name => $color_code) : ?>
+                <a class="sbp-color-swatch" style="display: inline-block; width: <?php print $s_width; ?>px; height: <?php print $s_height; ?>px; background: <?php print $color_code; ?>" href="#" data-color="<?php echo $name; ?>" title="<?php _e('click to select ' . $name, 'woocommerce'); ?>">
+                </a>
+            <?php endforeach; ?>
+
+        </div>
 
 <?php }
-
-
-    /**
-     * Query products based on language currently being viewed on the frontend and return array of product ids
-     *
-     * @return array $prod_ids - Array of matching product IDs to be used to render frontend display of products
-     */
-    private static function query_products($category)
-    {
-
-        $args = [
-            'limit'    => -1,
-            'category' => [$category],
-            'return'   => 'ids',
-            'status'   => 'publish'
-        ];
-
-        $prod_ids = wc_get_products($args);
-
-        return $prod_ids;
-    }
 }

@@ -261,27 +261,8 @@ class SBP_Settings
 
             <h1><?php echo $title; ?></h1>
             <p>
-                <?php _e('Use the fields below to add a list of Shop By attributes. Attributes specified below will be available for selection in product edit screens.', 'woocommerce'); ?>
+                <b><?php _e('Use the fields below to add a list of custom Shop By attributes. <br>Attributes specified below will be available for selection in product edit screens. <br><u>NOTE:</u> Be sure to add unique attributes below which do not match existing attributes as defined under Products -> Attributes, since thse attributes are used by default for the filtering process.', 'woocommerce'); ?></b>
             </p>
-
-            <!-- existing attributes -->
-            <div id="sbp-existing-attribs">
-                <h2><?php _e('Existing Attributes:', 'woocommerce'); ?></h2>
-
-                <p>
-                    <?php _e('Click on any of the existing attributes below to add it to an attribute field.', 'woocommerce'); ?>
-                </p>
-
-                <!-- attribute buttons -->
-                <?php
-                foreach ($ext_attributes as $attrib_type => $attribs) :
-                    foreach ($attribs as $key => $name) : ?>
-                        <button class="button button-secondary sbp-add-existing" title="<?php _e('add to input', 'woocommerce'); ?>"><?php echo $name; ?></button>
-                <?php endforeach;
-                endforeach;
-                ?>
-            </div>
-
 
             <!-- attribute input/add/remove wrap -->
             <div class="sbp-attributes-wrap">
@@ -382,26 +363,6 @@ class SBP_Settings
                 $(document).on('click', '.sbp-attrib-rem', function(e) {
                     e.preventDefault();
                     $(this).parent().remove();
-                });
-
-                // *************************************
-                // insert existing attributes to inputs
-                // *************************************
-                $('.sbp-add-existing').on('click', function(e) {
-
-                    e.preventDefault();
-
-                    let btn_text = $(this).text();
-                    let input_counter = 1;
-
-                    $('.sbp-attribute').each(function(index, element) {
-                        if ($(this).val() === '' && input_counter === 1) {
-                            $(this).val(btn_text);
-                            input_counter += 1;
-                        }
-                    });
-
-                    target.append(input_html);
                 });
 
                 // ************************

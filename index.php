@@ -21,20 +21,25 @@ function sbwc_shop_by_init()
      * Classes and traits
      */
 
-    // settings
+    // Settings
     include SBP_PATH . 'classes/settings/SBP_Settings.php';
 
-    // frontend
-    include SBP_PATH . 'classes/template/traits/widget-shortcodes/SBP_Colors_SC.php';
-    include SBP_PATH . 'classes/template/traits/widget-shortcodes/SBP_Features_SC.php';
-    include SBP_PATH . 'classes/template/traits/widget-shortcodes/SBP_Price_Slider_SC.php';
+    // Template shortcode
     include SBP_PATH . 'classes/template/traits/SBP_Register_Templates.php';
     include SBP_PATH . 'classes/template/traits/SBP_Template_CSS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Template_JS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Frontend_SC.php';
+    include SBP_PATH . 'classes/template/traits/SBP_Insert_Default_Pages.php';
     include SBP_PATH . 'classes/template/SBP_Template.php';
 
-    // cpt
+    // Widget shortcode
+    include SBP_PATH.'classes/widget/traits/SBP_Query_Prods.php';
+    include SBP_PATH.'classes/widget/traits/SBP_Colors.php';
+    include SBP_PATH.'classes/widget/traits/SBP_Features.php';
+    include SBP_PATH.'classes/widget/traits/SBP_Price_Slider.php';
+    include SBP_PATH.'classes/widget/traits/SBP_Filtered_Prod_HTML.php';
+    include SBP_PATH.'classes/widget/SBP_Widget_SC.php';
+
+    // CPT
     include SBP_PATH . 'functions/cpt.php';
-    
 }

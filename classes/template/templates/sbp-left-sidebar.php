@@ -41,7 +41,7 @@ get_header(); ?>
 
                 <div class="shop-container">
 
-                    <div class="products row row-small large-columns-3 medium-columns-3 small-columns-2 has-shadow row-box-shadow-2-hover equalize-box">
+                    <div id="sbp-products-cont" class="products row row-small large-columns-3 medium-columns-3 small-columns-2 has-shadow row-box-shadow-2-hover equalize-box">
 
                         <?php while (have_posts()) : the_post(); ?>
                             <?php the_content(); ?>
