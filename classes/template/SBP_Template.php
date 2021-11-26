@@ -9,8 +9,7 @@ class SBP_Template
     /**
      * Traits
      */
-    use SBP_Register_Templates,
-        SBP_Template_JS,
+    use SBP_Template_JS,
         SBP_Template_CSS,
         SBP_Frontend_SC,
         SBP_Insert_Default_Pages;
@@ -33,11 +32,25 @@ class SBP_Template
         // shortcode to display different shop by pages
         add_shortcode('sbp_shopby_display', [__CLASS__, 'sbp_frontend_display']);
 
-        // register custom Flatsome page templates for selection in shop by page edit screen 
-        add_filter('theme_shop-by_templates', [__CLASS__, 'sbp_register_page_templates'], 10, 4);
+        // load/filter page template
+        add_filter('single_template', [__CLASS__, 'sbp_load_page_template']);
+    }
 
-        // load custom page templates
-        add_filter('template_include', [__CLASS__, 'sbp_load_page_templates']);
+    /**
+     * Loads custom template for our custom post type
+     *
+     * @param  string $template
+     * @return string $template
+     */
+    public static function sbp_load_page_template($template)
+    {
+        global $post;
+
+        if ($post->post_type == "shop-by" && $template !== locate_template(array("sbp-left-sidebar.php"))) {
+            return SBP_PATH . "classes/template/templates/sbp-left-sidebar.php";
+        }
+
+        return $template;
     }
 
     /**

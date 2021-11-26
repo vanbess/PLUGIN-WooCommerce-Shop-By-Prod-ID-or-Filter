@@ -69,24 +69,27 @@ trait SBP_Colors
         $s_width = get_option('woocommerce_shop_swatch_width', '32');
         $s_height = get_option('woocommerce_shop_swatch_height', '32');
 
+        // only show color filters if $color_data is not empty
+        if (!empty($color_data)) :
 ?>
-        <!-- colors container -->
-        <div id="sbp-colors-cont">
+            <!-- colors container -->
+            <div id="sbp-colors-cont">
 
-            <span id="sbp-widget-filter-head"><?php _e('Filter ' . $category, 'woocommerce'); ?></span>
+                <span id="sbp-widget-filter-head"><?php _e('Filter ' . $category, 'woocommerce'); ?></span>
 
-            <span class="widget-title">
-                <span><?php _e('Colors', 'woocommerce'); ?></span>
-            </span>
+                <span class="widget-title">
+                    <span><?php _e('Colors', 'woocommerce'); ?></span>
+                </span>
 
-            <div class="is-divider small"></div>
+                <div class="is-divider small"></div>
 
-            <?php foreach ($color_data as $name => $color_code) : ?>
-                <a class="sbp-color-swatch" style="display: inline-block; width: <?php print $s_width; ?>px; height: <?php print $s_height; ?>px; background: <?php print $color_code; ?>" href="#" data-color="<?php echo $name; ?>" title="<?php _e('click to select ' . $name, 'woocommerce'); ?>">
-                </a>
-            <?php endforeach; ?>
+                <?php foreach ($color_data as $name => $color_code) : ?>
+                    <a class="sbp-color-swatch" style="display: inline-block; width: <?php print $s_width; ?>px; height: <?php print $s_height; ?>px; background: <?php print $color_code; ?>" href="#" data-color="<?php echo $name; ?>" title="<?php _e('click to select ' . $name, 'woocommerce'); ?>">
+                    </a>
+                <?php endforeach; ?>
 
-        </div>
+            </div>
 
-<?php }
+<?php endif;
+    }
 }

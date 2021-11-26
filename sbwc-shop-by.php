@@ -25,7 +25,6 @@ function sbwc_shop_by_init()
     include SBP_PATH . 'classes/settings/SBP_Settings.php';
 
     // Template shortcode
-    include SBP_PATH . 'classes/template/traits/SBP_Register_Templates.php';
     include SBP_PATH . 'classes/template/traits/SBP_Template_CSS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Template_JS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Frontend_SC.php';

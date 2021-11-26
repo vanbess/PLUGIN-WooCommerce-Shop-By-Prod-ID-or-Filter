@@ -45,7 +45,17 @@ trait SBP_Price_Slider
         $price_arr = [];
 
         foreach ($prod_ids as $key => $id) :
-            $price_arr[] = get_post_meta($id, '_price', true);
+            
+            $prod_data = wc_get_product($id);
+
+            if ($prod_data->get_type() === 'variable') :
+                $children = $prod_data->get_children();
+                foreach ($children as $child_id) :
+                    $price_arr[] = get_post_meta($child_id, '_price', true);
+                endforeach;
+            else :
+                $price_arr[] = get_post_meta($id, '_price', true);
+            endif;
         endforeach;
 
         // sort array
@@ -80,7 +90,7 @@ trait SBP_Price_Slider
             <input type="hidden" id="sbp-range-max" data-max="<?php echo self::$max_price; ?>">
 
             <!-- slider actual -->
-            <div id="sbp-slider-range" data-currency="<?php echo alg_get_current_currency_code(); ?>"></div>
+            <div id="sbp-slider-range" data-currency="<?php echo get_woocommerce_currency_symbol(); ?>"></div>
 
         </div>
 
@@ -102,12 +112,12 @@ trait SBP_Price_Slider
                     max: $('#sbp-range-max').data('max'),
                     values: [$('#sbp-range-min').data('min'), $('#sbp-range-max').data('max')],
                     slide: function(event, ui) {
-                        $("#amount").text(ui.values[0] + ' ' + $(this).data('currency') + ' - ' + ui.values[1] + ' ' + $(this).data('currency'));
+                        $("#amount").text($(this).data('currency') + ' ' + ui.values[0] + ' - ' + $(this).data('currency') + ui.values[1]);
                         $('#sbp-range-min').val(ui.values[0]);
                         $('#sbp-range-max').val(ui.values[1]);
                     }
                 });
-                $("#amount").text($("#sbp-slider-range").slider("values", 0) + ' ' + $("#sbp-slider-range").data('currency') + ' - ' + $("#sbp-slider-range").slider("values", 1) + ' ' + $("#sbp-slider-range").data('currency'));
+                $("#amount").text($("#sbp-slider-range").data('currency') + ' ' + $("#sbp-slider-range").slider("values", 0) + ' - ' + $("#sbp-slider-range").data('currency') + ' ' + $("#sbp-slider-range").slider("values", 1));
                 $('#sbp-range-min').val($("#sbp-slider-range").slider("values", 0));
                 $('#sbp-range-max').val($("#sbp-slider-range").slider("values", 1));
             });

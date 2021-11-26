@@ -18,8 +18,7 @@ trait SBP_Insert_Default_Pages
         $prod_cats = get_terms(
             [
                 'taxonomy'   => 'product_cat',
-                'hide_empty' => false,
-                // 'parent'     => 0
+                'hide_empty' => true,
             ]
         );
 
@@ -72,7 +71,7 @@ trait SBP_Insert_Default_Pages
 
                 $page_id = wp_insert_post([
                     'post_title'   => $name,
-                    'post_content' => '[sbp_shopby_display]',
+                    'post_content' => '',
                     'post_status'  => 'publish',
                     'post_type'    => 'shop-by',
                     'meta_input'   => [

@@ -19,7 +19,6 @@ trait SBP_Register_Templates
     {
         $post_templates['sbptmpl-left-sidebar.php'] = __('SBP Left Sidebar', 'woocommerce');
         $post_templates['sbptmpl-right-sidebar.php'] = __('SBP Right Sidebar', 'woocommerce');
-
         return $post_templates;
     }
 
