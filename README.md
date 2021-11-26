@@ -1,4 +1,4 @@
-# Shop By Product Category Plugin for WooCommerce
+# Shop By Product Category Filter Plugin for WooCommerce
 
 ## Overview
 
