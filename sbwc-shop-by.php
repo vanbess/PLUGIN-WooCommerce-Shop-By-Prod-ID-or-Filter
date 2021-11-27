@@ -41,4 +41,7 @@ function sbwc_shop_by_init()
 
     // CPT
     include SBP_PATH . 'functions/cpt.php';
+
+    remove_filter('the_content', 'wpautop');
+
 }

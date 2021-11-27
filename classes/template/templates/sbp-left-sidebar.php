@@ -41,20 +41,15 @@ get_header(); ?>
         <div id="content" class="large-9 col" role="main">
             <div class="page-inner">
                 <div class="shop-container">
-                    <div id="sbp-post-editor-content">
-                        <?php while (have_posts()) : the_post(); ?>
-                            <?php the_content(); ?>
-                        <?php endwhile; // end of the loop. ?>
-                    </div>
-                    <div id="sbp-products-cont" class="products row row-small large-columns-3 medium-columns-3 small-columns-2 has-shadow row-box-shadow-2-hover equalize-box">
-                        <?php echo do_shortcode('[sbp_shopby_display]'); ?>
-                    </div><!-- .products -->
-                </div><!-- .shop-container -->
+                    <?php while (have_posts()) : the_post(); ?>
+                        <?php the_content(); ?>
+                    <?php endwhile; // end of the loop. 
+                    ?>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<?php do_action('flatsome_after_page'); ?>
+    <?php do_action('flatsome_after_page'); ?>
 
-<?php get_footer(); ?>
+    <?php get_footer(); ?>

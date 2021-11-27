@@ -25,9 +25,6 @@ trait SBP_Insert_Default_Pages
         // array which will hold initial cat names
         $cat_names = [];
 
-        // array which will hold filtered cat names
-        $filtered_cat_names = [];
-
         // array which holds term ids (english only)
         $term_ids = [];
 
@@ -71,12 +68,12 @@ trait SBP_Insert_Default_Pages
 
                 $page_id = wp_insert_post([
                     'post_title'   => $name,
-                    'post_content' => '',
+                    'post_content' => '[sbp_shopby_display]',
                     'post_status'  => 'publish',
                     'post_type'    => 'shop-by',
-                    'meta_input'   => [
-                        '_wp_page_template' => 'sbptmpl-left-sidebar.php'
-                    ]
+                    // 'meta_input'   => [
+                    //     '_wp_page_template' => 'sbptmpl-left-sidebar.php'
+                    // ]
                 ]);
 
                 if (!is_wp_error($page_id)) :
