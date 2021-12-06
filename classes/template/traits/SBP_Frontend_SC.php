@@ -14,11 +14,9 @@ trait SBP_Frontend_SC
 
         global $post;
 
-        // retrieve term name, which should be equal to post title
-        $term = $post->post_title;
-
-        // query product ids based on retrieved term
-        $prod_ids = self::query_products($term);
+        // retrieve post id and product id string
+        $post_id = $post->post_title;
+        $prod_ids = explode(',', get_post_meta($post_id, 'sbp_prods', true));
 
         // loop to retrieve returned product data and display
         if (!empty($prod_ids)) : ?>
@@ -96,6 +94,8 @@ trait SBP_Frontend_SC
                     </div>
                 <?php endforeach; ?>
             </div>
+        <?php else : ?>
+            <p><b><?php _e('No products selected for this page.', 'woocommerce'); ?></b></p>
 <?php endif;
 
         // enqueue javascript and css

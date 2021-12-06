@@ -28,7 +28,7 @@ function sbwc_shop_by_init()
     include SBP_PATH . 'classes/template/traits/SBP_Template_CSS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Template_JS.php';
     include SBP_PATH . 'classes/template/traits/SBP_Frontend_SC.php';
-    include SBP_PATH . 'classes/template/traits/SBP_Insert_Default_Pages.php';
+    include SBP_PATH . 'classes/template/traits/SBP_Prod_Select_Metabox.php';
     include SBP_PATH . 'classes/template/SBP_Template.php';
 
     // Widget shortcode

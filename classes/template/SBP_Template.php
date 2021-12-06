@@ -12,7 +12,7 @@ class SBP_Template
     use SBP_Template_JS,
         SBP_Template_CSS,
         SBP_Frontend_SC,
-        SBP_Insert_Default_Pages;
+        SBP_Prod_Select_Metabox;
 
     /**
      * Class init function. Registers all scripts, WP AJAX functions 
@@ -26,6 +26,10 @@ class SBP_Template
         // insert default shop by pages
         add_action('admin_head', [__CLASS__, 'insert_default_pages']);
 
+         // register ajax action for saving sbp products
+         add_action('wp_ajax_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
+         add_action('wp_ajax_nopriv_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
+
         // scripts
         add_action('wp_footer', [__CLASS__, 'sbp_frontend_reg_scripts']);
 
@@ -34,6 +38,9 @@ class SBP_Template
 
         // load/filter page template
         add_filter('single_template', [__CLASS__, 'sbp_load_page_template']);
+
+        // add custom shop by metabox
+        add_action('add_meta_boxes', [__CLASS__, 'sbp_metabox_args']);
     }
 
     /**
@@ -60,7 +67,10 @@ class SBP_Template
      */
     public static function sbp_frontend_reg_scripts()
     {
+        // JS
         wp_register_script('sbp-frontend-js', self::sbp_frontend_js(), ['jquery'], false, false);
+
+        // CSS
         wp_register_style('sbp-frontend-css', self::sbp_frontend_css(), [], false);
         wp_register_style('sbp-jquery-ui', SBP_URL . 'assets/jquery.ui.css', [], false);
     }
@@ -84,6 +94,18 @@ class SBP_Template
         $prod_ids = wc_get_products($args);
 
         return $prod_ids;
+    }
+
+    public static function sbp_metabox_args()
+    {
+        add_meta_box(
+            'sbp-product-select',
+            __('Select Shop-By Products', 'woocommerce'),
+            [__CLASS__, 'sbp_metabox_html'],
+            'shop-by',
+            'advanced',
+            'high'
+        );
     }
 }
 
