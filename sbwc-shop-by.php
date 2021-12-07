@@ -32,7 +32,6 @@ function sbwc_shop_by_init()
     include SBP_PATH . 'classes/template/SBP_Template.php';
 
     // Widget shortcode
-    include SBP_PATH.'classes/widget/traits/SBP_Query_Prods.php';
     include SBP_PATH.'classes/widget/traits/SBP_Colors.php';
     include SBP_PATH.'classes/widget/traits/SBP_Features.php';
     include SBP_PATH.'classes/widget/traits/SBP_Price_Slider.php';

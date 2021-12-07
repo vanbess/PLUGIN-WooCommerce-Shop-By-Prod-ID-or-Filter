@@ -3,8 +3,6 @@
 trait SBP_Price_Slider
 {
 
-    use SB_Query_Prods;
-
     /**
      * Min price, max price and current currency properties
      */
@@ -32,19 +30,16 @@ trait SBP_Price_Slider
     {
         global $post;
 
-        // retrieve category name, which should be equal to post title
-        $category = $post->post_title;
-
         // enqueue scripts
         add_action('wp_footer', [__TRAIT__, 'sbp_slider_scripts']);
 
         // query products and product prices
-        $prod_ids = self::sbp_query_products($category);
+        $prod_ids = get_post_meta( $post->ID, 'sbp_products', true );
 
         // price array
         $price_arr = [];
 
-        foreach ($prod_ids as $key => $id) :
+        foreach ($prod_ids as $id) :
             
             $prod_data = wc_get_product($id);
 

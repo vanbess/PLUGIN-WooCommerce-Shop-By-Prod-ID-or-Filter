@@ -18,8 +18,6 @@ trait SBP_Prod_Select_Metabox
         global $post;
         $post_id = $post->ID;
 
-        echo $post_id;
-
         // query products and return ids
         $args = [
             'limit'    => -1,
@@ -33,7 +31,29 @@ trait SBP_Prod_Select_Metabox
         $langs = pll_languages_list();
 
         // query saved product ids
-        $saved_prod_ids = maybe_unserialize(get_post_meta($post_id, 'sbp_products', true));
+        $saved_prod_ids = get_post_meta($post_id, 'sbp_products', true);
+
+        // query saved language
+        $saved_lang = get_post_meta($post_id, 'sbp_lang', true);
+
+        // retrieve alternative language product ids if $saved_lang is not EN
+        $lang_prod_ids = [];
+        if ($saved_lang && $saved_lang !== 'en') :
+            foreach ($prod_ids as $pid) :
+
+                $translations = pll_get_post_translations($pid);
+
+                foreach ($translations as $lang => $tid) :
+                    if ($lang === $saved_lang) :
+                        $lang_prod_ids[] = $tid;
+                    endif;
+                endforeach;
+
+            endforeach;
+        endif;
+
+        // set final product ids
+        !empty($lang_prod_ids) ? $final_ids = $lang_prod_ids : $final_ids = $prod_ids;
 
 ?>
 
@@ -45,8 +65,8 @@ trait SBP_Prod_Select_Metabox
         </p>
 
         <!-- products select -->
-        <p>
-            <?php foreach ($prod_ids as $pid) : ?>
+        <p id="sbp-product-button" data-current-lang="<?php echo $saved_lang; ?>">
+            <?php foreach ($final_ids as $pid) : ?>
                 <?php if (in_array($pid, $saved_prod_ids)) : ?>
                     <button class="button button-secondary sbp-product-select button-primary" data-id="<?php echo $pid ?>" style="margin-bottom: 8px; margin-right: 5px;">
                         <?php echo get_the_title($pid); ?>
@@ -72,7 +92,6 @@ trait SBP_Prod_Select_Metabox
             </label>
 
             <select id="sbp-lang-select">
-                <option value=""><b><?php _e('select...', 'woocommerce'); ?></b></option>
                 <?php foreach ($langs as $lang) : ?>
                     <option value="<?php echo $lang; ?>"><?php echo strtoupper($lang); ?></option>
                 <?php endforeach; ?>
@@ -103,12 +122,13 @@ trait SBP_Prod_Select_Metabox
                 // vars
                 let selected = [];
 
+                // set currently select lang
+                $('#sbp-lang-select').val($('#sbp-product-button').data('current-lang'));
+
                 // select products
-                $('.sbp-product-select').each(function(index, element) {
-                    $(this).on('click', function(e) {
-                        e.preventDefault();
-                        $(this).toggleClass('button-primary');
-                    });
+                $(document).on('click', '.sbp-product-select', function(e) {
+                    e.preventDefault();
+                    $(this).toggleClass('button-primary');
                 });
 
                 // save selected products
@@ -116,7 +136,8 @@ trait SBP_Prod_Select_Metabox
                     e.preventDefault();
 
                     let nonce = $(this).data('nonce'),
-                        prod_id = $(this).data('prod-id');
+                        prod_id = $(this).data('prod-id'),
+                        lang = $('#sbp-lang-select').val();
 
                     // push selected products to selected array
                     $('.sbp-product-select').each(function(index, element) {
@@ -132,7 +153,8 @@ trait SBP_Prod_Select_Metabox
                             '_ajax_nonce': nonce,
                             'action': 'sbp_backend_save_prods',
                             'selected': selected,
-                            'prod_id': prod_id
+                            'prod_id': prod_id,
+                            'lang': lang
                         }
 
                         $.post(ajaxurl, data, function(response) {
@@ -146,9 +168,50 @@ trait SBP_Prod_Select_Metabox
 
                 });
 
+                // change product language
+                $('button#sbp-change-lang').on('click', function(e) {
+                    e.preventDefault();
+
+                    // vars
+                    let nonce = $(this).data('nonce'),
+                        products = $(this).data('prods'),
+                        lang = $('#sbp-lang-select').val(),
+                        default_text = $(this).text();
+
+                    // change button text while we wait
+                    $(this).text('<?php _e('Working...', 'woocommerce') ?>');
+
+                    // if lang not selected, display error, else submit ajax request
+                    if (lang.length === 0) {
+                        alert('<?php _e('Please select a language', 'woocommerce'); ?>');
+                    } else {
+
+                        // json object
+                        var data = {
+                            '_ajax_nonce': nonce,
+                            'action': 'sbp_backend_save_prods',
+                            'products': products,
+                            'lang': lang
+                        }
+
+                        // send ajax request
+                        $.post(ajaxurl, data, function(response) {
+                            // console.log(response)
+
+                            // if no prod ids returned, display error, else insert alternative set of buttons
+                            if (response.success === false) {
+                                $('#sbp-product-button').empty().html('<b style="color: red;"><i>' + response.data + '</i></b>');
+                                $('button#sbp-change-lang').text(default_text);
+                            } else {
+                                $('#sbp-product-button').empty().html(response);
+                                $('button#sbp-change-lang').text(default_text);
+                            }
+                        });
+                    }
+                });
             });
         </script>
-<?php }
+        <?php }
 
     /**
      * AJAX function to save product ids defined in the page edit screen metabox
@@ -163,12 +226,14 @@ trait SBP_Prod_Select_Metabox
         // save selected
         if (isset($_POST['selected'])) :
 
-            $prods = $_POST['selected'];
+            $prods   = $_POST['selected'];
             $post_id = $_POST['prod_id'];
+            $lang    = $_POST['lang'];
 
-            $updated = update_post_meta($post_id, 'sbp_products', maybe_serialize($prods));
+            $updated[] = update_post_meta($post_id, 'sbp_products', $prods);
+            $updated[] = update_post_meta($post_id, 'sbp_lang', $lang);
 
-            if ($updated) :
+            if (!empty($updated)) :
                 wp_send_json(__('Products successfully saved', 'woocommerce'));
             endif;
 
@@ -176,6 +241,34 @@ trait SBP_Prod_Select_Metabox
 
         // change language
         if (isset($_POST['lang'])) :
+
+            $prod_ids = explode(',', $_POST['products']);
+            $lang     = $_POST['lang'];
+
+            $new_pids = [];
+
+            foreach ($prod_ids as $pid) :
+                $translations = pll_get_post_translations($pid);
+
+                foreach ($translations as $tlang => $tid) :
+                    if ($tlang === $lang) :
+                        $new_pids[] = $tid;
+                    endif;
+                endforeach;
+
+            endforeach;
+
+            if (!empty($new_pids)) :
+                foreach ($new_pids as $pid) : ?>
+
+                    <button class="button button-secondary sbp-product-select" data-id="<?php echo $pid; ?>" style="margin-bottom: 8px; margin-right: 5px;">
+                        <?php echo get_the_title($pid); ?>
+                    </button>
+
+<?php endforeach;
+            else :
+                wp_send_json_error(__('No products found for selected language. Please select a different language and try again.', 'woocommerce'));
+            endif;
 
         endif;
 

@@ -243,7 +243,7 @@ class SBP_Settings
      */
     public static function sbp_admin_page()
     {
-        add_submenu_page('edit.php?post_type=product', __('Shop By Settings', 'woocommerce'), __('Shop By Settings', 'woocommerce'), 'manage_options', 'sbp-settings', [__CLASS__, 'sbp_admin_page_content']);
+        add_submenu_page('edit.php?post_type=shop-by', __('Shop By Settings', 'woocommerce'), __('Shop By Settings', 'woocommerce'), 'manage_options', 'sbp-settings', [__CLASS__, 'sbp_admin_page_content']);
     }
 
     /**

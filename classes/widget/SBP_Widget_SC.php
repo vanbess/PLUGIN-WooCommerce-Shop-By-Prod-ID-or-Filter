@@ -13,7 +13,6 @@ class SBP_Widget_SC
     use SBP_Colors,
         SBP_Features,
         SBP_Price_Slider,
-        SB_Query_Prods,
         SB_Filtered_Prod_HTML;
 
     /**
@@ -48,6 +47,8 @@ class SBP_Widget_SC
      */
     public static function sbp_filter_widget()
     {
+        global $post;
+        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
 
         // colors select
         self::colors();
@@ -60,7 +61,7 @@ class SBP_Widget_SC
 
         <div id="sbp-filter-button-cont">
             <!-- submit filter request -->
-            <button id="sbp-filter-submit" class="button button-primary" title="<?php _e('click to filter', 'woocommerce'); ?>" data-nonce="<?php echo wp_create_nonce('shop by filter products'); ?>">
+            <button id="sbp-filter-submit" class="button button-primary" title="<?php _e('click to filter', 'woocommerce'); ?>" data-prod-ids="<?php echo implode(',', $prod_ids) ?>" data-nonce="<?php echo wp_create_nonce('shop by filter products'); ?>">
                 <?php _e('Filter', 'woocommerce'); ?>
             </button>
         </div>
@@ -83,35 +84,18 @@ class SBP_Widget_SC
         $custom_features = $_POST['custom_features'];
         $max_price       = $_POST['max_price'];
         $min_price       = $_POST['min_price'];
-        $category        = $_POST['category'];
+        $prod_ids        = explode(',', $_POST['prod_ids']);
 
-        // ***************************************************
-        // query initial products by category and price range
-        // ***************************************************
-        $prods = new WP_Query([
-            'post_type'        => 'product',
-            'post_status'      => 'publish',
-            'posts_per_page'   => -1,
-            'tax_query'        => [
-                [
-                    'taxonomy' => 'product_cat',
-                    'field'    => 'name',
-                    'terms'    => $category
-                ],
-            ],
-            'meta_query'      => [
-                [
-                    'key'     => '_price',
-                    'value'   => [$min_price, $max_price],
-                    'type'    => 'decimal',
-                    'compare' => 'BETWEEN'
-                ],
-            ],
-            'fields'           => 'ids'
-        ]);
+        $core_prod_ids = [];
+        foreach ($prod_ids as $pid) :
 
-        // setup core product ids array
-        $core_prod_ids = $prods->posts;
+            $price = get_post_meta($pid, '_price', true);
+
+            if ($price >= $min_price && $price <= $max_price) :
+                $core_prod_ids[] = $pid;
+            endif;
+
+        endforeach;
 
         // setup color and featur ids array
         $color_feature_ids = [];
@@ -218,13 +202,8 @@ class SBP_Widget_SC
      * Filter and selection JS
      */
     public static function sbp_filter_js()
-    {
+    {?>
 
-        global $post;
-
-        $category = $post->post_title;
-
-    ?>
         <script>
             jQuery(document).ready(function($) {
 
@@ -256,6 +235,9 @@ class SBP_Widget_SC
 
                     // ajax url
                     let ajaxurl = '<?php echo admin_url('admin-ajax.php') ?>';
+
+                    // prod_ids
+                    let prod_ids = $(this).data('prod-ids');
 
                     // colors
                     let colors = [];
@@ -296,7 +278,7 @@ class SBP_Widget_SC
                         'custom_features': custom_features,
                         'max_price': max_price,
                         'min_price': min_price,
-                        'category': '<?php echo $category ?>'
+                        'prod_ids': prod_ids
                     }
 
                     // send request

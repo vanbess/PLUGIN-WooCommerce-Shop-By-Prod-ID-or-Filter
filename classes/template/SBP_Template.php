@@ -23,12 +23,9 @@ class SBP_Template
     public static function init()
     {
 
-        // insert default shop by pages
-        add_action('admin_head', [__CLASS__, 'insert_default_pages']);
-
-         // register ajax action for saving sbp products
-         add_action('wp_ajax_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
-         add_action('wp_ajax_nopriv_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
+        // register ajax action for saving sbp products
+        add_action('wp_ajax_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
+        add_action('wp_ajax_nopriv_sbp_backend_save_prods', [__CLASS__, 'sbp_backend_save_prods']);
 
         // scripts
         add_action('wp_footer', [__CLASS__, 'sbp_frontend_reg_scripts']);

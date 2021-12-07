@@ -9,8 +9,6 @@
 trait SBP_Colors
 {
 
-    use SB_Query_Prods;
-
     /**
      * flag to check whether colored variable data have been saved or not
      */
@@ -29,13 +27,13 @@ trait SBP_Colors
         $category = $post->post_title;
 
         // query prodocts
-        $prod_ids = self::sbp_query_products($category);
+        $prod_ids = get_post_meta( $post->ID, 'sbp_products', true );
 
         // build color data
         $color_data = [];
 
         // loop
-        foreach ($prod_ids as $key => $id) :
+        foreach ($prod_ids as $id) :
 
             // retrieve colored variables meta data
             $attribs = get_post_meta($id, '_coloredvariables', true);

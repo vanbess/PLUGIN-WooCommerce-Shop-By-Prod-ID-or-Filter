@@ -3,8 +3,6 @@
 trait SBP_Features
 {
 
-    use SB_Query_Prods;
-
     /**
      * Displays selectable Shop By features
      *
@@ -15,11 +13,8 @@ trait SBP_Features
 
         global $post;
 
-        // retrieve category name, which should be equal to post title
-        $category = $post->post_title;
-
         // query products
-        $prod_ids = self::sbp_query_products($category);
+        $prod_ids = get_post_meta( $post->ID, 'sbp_products', true );
 
         // attrib noncolor features array
         $attrib_noncolor_features = [];
@@ -28,7 +23,7 @@ trait SBP_Features
         $custom_features_arr = [];
 
         // loop to retrieve product attribs and push attrib names to $attrib_noncolor_features
-        foreach ($prod_ids as $key => $id) :
+        foreach ($prod_ids as $id) :
 
             // get custom defined features
             $custom_features = maybe_unserialize(get_post_meta($id, 'sbp_attribs', true));
