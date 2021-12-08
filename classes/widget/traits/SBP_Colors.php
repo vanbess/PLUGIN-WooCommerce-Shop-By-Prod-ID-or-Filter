@@ -26,8 +26,8 @@ trait SBP_Colors
         // retrieve category name, which should be equal to post title
         $category = $post->post_title;
 
-        // query prodocts
-        $prod_ids = get_post_meta( $post->ID, 'sbp_products', true );
+        // retrieve product ids
+        $prod_ids = explode(',', get_post_meta($post->ID, 'sbp_products', true));
 
         // build color data
         $color_data = [];

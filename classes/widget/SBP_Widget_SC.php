@@ -48,7 +48,9 @@ class SBP_Widget_SC
     public static function sbp_filter_widget()
     {
         global $post;
-        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
+        
+        // retrieve product ids
+        $prod_ids = explode(',', get_post_meta($post->ID, 'sbp_products', true));
 
         // colors select
         self::colors();

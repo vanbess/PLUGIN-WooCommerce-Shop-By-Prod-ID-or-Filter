@@ -13,8 +13,8 @@ trait SBP_Features
 
         global $post;
 
-        // query products
-        $prod_ids = get_post_meta( $post->ID, 'sbp_products', true );
+        // retrieve product ids
+        $prod_ids = explode(',', get_post_meta($post->ID, 'sbp_products', true));
 
         // attrib noncolor features array
         $attrib_noncolor_features = [];

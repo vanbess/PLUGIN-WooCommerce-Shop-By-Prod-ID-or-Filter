@@ -73,31 +73,15 @@ class SBP_Template
     }
 
     /**
-     * Query products based on language currently being viewed on the frontend and return array of product ids
+     * Metabox registration arguments
      *
-     * @param string $current_lang - Currently set Polylang language. Defaults to 'en' or English
-     * @return array $prod_ids - Array of matching product IDs to be used to render frontend display of products
+     * @return void
      */
-    private static function query_products($term)
-    {
-
-        $args = [
-            'limit'    => -1,
-            'category' => [$term],
-            'return'   => 'ids',
-            'status'   => 'publish'
-        ];
-
-        $prod_ids = wc_get_products($args);
-
-        return $prod_ids;
-    }
-
     public static function sbp_metabox_args()
     {
         add_meta_box(
             'sbp-product-select',
-            __('Select Shop-By Products', 'woocommerce'),
+            __('Shop-By Products', 'woocommerce'),
             [__CLASS__, 'sbp_metabox_html'],
             'shop-by',
             'advanced',
