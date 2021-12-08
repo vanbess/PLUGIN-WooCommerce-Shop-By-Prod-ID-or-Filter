@@ -21,6 +21,37 @@ trait SBP_Prod_Select_Metabox
         // query saved product ids
         $saved_prod_ids = get_post_meta($post_id, 'sbp_products', true);
 
+        // query all products
+        $prod_ids = wc_get_products([
+            'post_status' => 'publish',
+            'limit'       => -1,
+            'return'      => 'ids'
+        ]);
+
+        // build initial select2 array
+        $select2_arr = [];
+        foreach ($prod_ids as $pid) :
+            $select2_arr[$pid] = get_the_title($pid);
+        endforeach;
+
+        // get all translated post ids and titles (polylang) and push to $select2_arr
+        if (function_exists('pll_get_post_translations')) :
+
+            foreach ($prod_ids as $pid) :
+
+                $curr_lang = pll_get_post_language($pid);
+                $translations = pll_get_post_translations($pid);
+
+                foreach ($translations as $lang => $tid) :
+                    if ($lang !== $curr_lang) :
+                        $select2_arr[$tid] = get_the_title($tid);
+                    endif;
+                endforeach;
+
+            endforeach;
+
+        endif;
+
 ?>
 
         <!-- label -->
@@ -32,7 +63,13 @@ trait SBP_Prod_Select_Metabox
 
         <!-- products define -->
         <p>
-            <input id="sbp-prod-ids" type="text" placeholder="<?php _e('comma separated list of product IDs', 'woocommerce'); ?>" style="width: 100%;" value="<?php echo $saved_prod_ids; ?>">
+
+            <select name="sbp-prod-ids[]" id="sbp-prod-ids" multiple style="width: 100%; border: 1px solid darkgrey 1px;" data-current="<?php echo implode(',', $saved_prod_ids); ?>">
+                <?php foreach ($select2_arr as $pid => $title) : ?>
+                    <option value="<?php echo $pid; ?>"><?php echo $title; ?></option>
+                <?php endforeach; ?>
+            </select>
+
             <br>
         </p>
 
@@ -43,9 +80,10 @@ trait SBP_Prod_Select_Metabox
             </button>
         </p>
 
-
     <?php
-        // js
+        // js + css
+        wp_enqueue_style('sbp-select2', SBP_URL . 'assets/select2.min.css', [], false);
+        wp_enqueue_script('sbp-select2', SBP_URL . 'assets/select2.min.js', ['jquery'], false, true);
         wp_enqueue_script('sbp-backend-js', self::sbp_backend_js(), ['jquery'], false, true);
     }
 
@@ -58,6 +96,27 @@ trait SBP_Prod_Select_Metabox
     { ?>
         <script>
             jQuery(document).ready(function($) {
+
+                // retrieve currently defined product ids
+                let current_prods = $('#sbp-prod-ids').data('current');
+
+                // setup array which will hold correctly formatted product id list
+                let pre_selected = [];
+
+                // loop through current_prods and push vals to pre_selected
+                $.each(current_prods.split(","), function(i, e) {
+                    pre_selected.push(e);
+                });
+
+                // preselect currently defined product ids
+                $('#sbp-prod-ids').val(pre_selected);
+
+                // render select2
+                $('#sbp-prod-ids').select2({
+                    placeholder: 'click to select products',
+                    minimumInputLength: 3,
+                    width: 'resolve',
+                });
 
                 // save product ids
                 $('#sbp-save-products').on('click', function(e) {

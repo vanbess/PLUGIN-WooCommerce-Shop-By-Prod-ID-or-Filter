@@ -34,7 +34,7 @@ trait SBP_Price_Slider
         add_action('wp_footer', [__TRAIT__, 'sbp_slider_scripts']);
 
         // retrieve product ids
-        $prod_ids = explode(',', get_post_meta($post->ID, 'sbp_products', true));
+        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);;
 
         // price array
         $price_arr = [];

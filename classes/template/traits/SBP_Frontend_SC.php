@@ -15,7 +15,7 @@ trait SBP_Frontend_SC
         global $post;
 
         // retrieve product ids
-        $prod_ids = explode(',', get_post_meta($post->ID, 'sbp_products', true));
+        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
 
         // loop to retrieve returned product data and display
         if (!empty($prod_ids)) : ?>
