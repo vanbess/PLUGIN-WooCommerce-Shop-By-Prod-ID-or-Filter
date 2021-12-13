@@ -254,8 +254,6 @@ class SBP_Settings
     public static function sbp_admin_page_content()
     {
         global $title;
-        $ext_attributes = self::query_product_attribs();
-
     ?>
         <div class="wrap woocommerce">
 

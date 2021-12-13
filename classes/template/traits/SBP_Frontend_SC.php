@@ -14,8 +14,19 @@ trait SBP_Frontend_SC
 
         global $post;
 
-        // retrieve product ids
-        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
+        // query saved product tags
+        $saved_prod_tags = get_post_meta($post->ID, 'sbp_prod_tags', true);
+
+        if (!empty($saved_prod_tags)) :
+            $args = array(
+                'tag' => $saved_prod_tags,
+                'return' => 'ids'
+            );
+            $prod_ids = wc_get_products($args);
+        else :
+            // retrieve product ids instead if tags not defined
+            $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
+        endif;
 
         // loop to retrieve returned product data and display
         if (!empty($prod_ids)) : ?>
@@ -94,7 +105,7 @@ trait SBP_Frontend_SC
                 <?php endforeach; ?>
             </div>
         <?php else : ?>
-            <p><b><?php _e('No products selected for this page.', 'woocommerce'); ?></b></p>
+            <p><b><?php _e('No products selected for this page, or specified product tags do not match any products.', 'woocommerce'); ?></b></p>
 <?php endif;
 
         // enqueue javascript and css

@@ -2,11 +2,9 @@
 
 ## Overview
 
-This plugin, when installed, creates a new post/page type by the name of "shop-by", which displays products based on existing WooCommerce product categories.
+This plugin, when installed, creates a new post/page type by the name of "shop-by", which displays products based on a specific product selection, or based on a specific product tag as defined in the shop-by post edit screen. Defined product tags will supercede selected products in terms of which set of products are displayed on the frontend. 
 
-On plugin activation, a new page is inserted into the database for each of these product categories, with page titles being that of the category itself. The page title should be left as is when editing each of these pages in the backend, since they are used to query that particular categories products by name.
-
-Changing the page name to something which does not match a product category will cause silent display failure of the products contained in that category. However, if the slug needs to be changed to something else, this can be done without affecting frontend display of products.
+In orther words, both specific products and product tags can be defined on the post edit screen for display, but if product tags are specified, any individual products specified will be overridden by products which have the tag or tags attached. If no tags defined, selected products will be used instead. If neither tags nor specific products are defined, nothing will be displayed on the front, so be sure to define either/or.
 
 If you need to add additional content to a particular page, simply do so in the page text editor, updating the page afterwards.
 

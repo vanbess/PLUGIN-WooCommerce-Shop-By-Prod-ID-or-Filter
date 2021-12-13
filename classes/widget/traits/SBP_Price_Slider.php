@@ -33,8 +33,19 @@ trait SBP_Price_Slider
         // enqueue scripts
         add_action('wp_footer', [__TRAIT__, 'sbp_slider_scripts']);
 
-        // retrieve product ids
-        $prod_ids = get_post_meta($post->ID, 'sbp_products', true);;
+        // query saved product tags
+        $saved_prod_tags = get_post_meta($post->ID, 'sbp_prod_tags', true);
+
+        if (!empty($saved_prod_tags)) :
+            $args = array(
+                'tag' => $saved_prod_tags,
+                'return' => 'ids'
+            );
+            $prod_ids = wc_get_products($args);
+        else :
+            // retrieve product ids instead if tags not defined
+            $prod_ids = get_post_meta($post->ID, 'sbp_products', true);
+        endif;
 
         // price array
         $price_arr = [];
