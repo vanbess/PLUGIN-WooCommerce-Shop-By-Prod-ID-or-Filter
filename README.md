@@ -1,4 +1,4 @@
-# Shop By Product ID or Tag Filter Plugin for WooCommerce
+# PLUGIN: Shop By Product ID or Tag for WooCommerce
 
 ## Overview
 
